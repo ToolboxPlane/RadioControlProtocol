@@ -57,6 +57,7 @@ The first byte consists of the following bits:
 
 ##### Resolution
 Three bytes containing the resolution of each channel transmitted, possible values are:
+
 | Value | Resolution | Bit per Channel |
 | ---   | ---        | ---             |
 | 0b000 | 32         | 5               |
@@ -70,6 +71,7 @@ Three bytes containing the resolution of each channel transmitted, possible valu
 
 ##### Channel count
 Three bytes containing the amount of channels used, possible values are:
+
 | Value | Channels   |
 | ---   | ---        |
 | 0b000 | 1          |
