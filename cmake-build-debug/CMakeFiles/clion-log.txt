@@ -1,0 +1,4 @@
+/home/paul/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/172.3968.17/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/paul/Programmieren/C++/LoRaLib
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/paul/Programmieren/C++/LoRaLib/cmake-build-debug
