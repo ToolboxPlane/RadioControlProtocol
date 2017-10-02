@@ -27,7 +27,7 @@
 
 \section{Example Application}
 \subsection{Trainer}
-Transmitter -> Transmitter -> Plane
+Transmitter $\to$ Transmitter $\to$ Plane
 \subsection{Long Range}
   Long Range: Multiple Transmitters, Drone as Repeater. TCP for Transmitters.
 
@@ -200,9 +200,7 @@ Transmitter -> Transmitter -> Plane
    The data is just queued together so the first r (with r being the channel
    resolution) bits are the first channel, bits r+1 to r*2 are the second
    until the last channel. If there are unused bits left at the end they are
-   set to 0.
-
-   0 equals don't care
+   ignored.
 
   \subsection{Footer}
     The footer consists of two bytes Checksum End byte
