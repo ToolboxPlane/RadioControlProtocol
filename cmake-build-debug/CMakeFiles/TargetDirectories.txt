@@ -1,3 +1,0 @@
-/home/paul/Programmieren/C++/LoRaLib/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/paul/Programmieren/C++/LoRaLib/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/paul/Programmieren/C++/LoRaLib/cmake-build-debug/CMakeFiles/LoRaLib.dir
