@@ -1,7 +1,7 @@
 //
 // Created by paul on 02.10.17.
 //
-#include "lib.hpp"
+#include "rcLib.hpp"
 
 uint8_t rcLib::Package::globalPackageUid = 0;
 uint8_t rcLib::Package::transmitterId = 0;
