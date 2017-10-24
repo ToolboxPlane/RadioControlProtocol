@@ -4,11 +4,11 @@
 #include "lib.hpp"
 
 uint8_t rcLib::Package::globalPackageUid = 0;
+uint8_t rcLib::Package::transmitterId = 0;
 
 rcLib::Package::Package() = default;
 
-rcLib::Package::Package(uint8_t deviceId, uint16_t resolution, uint8_t channelCount) {
-    this->tid = deviceId;
+rcLib::Package::Package(uint16_t resolution, uint8_t channelCount) {
     this->resolution = resolution;
     this->channelCount = channelCount;
 }
@@ -17,11 +17,16 @@ rcLib::Package::Package(uint8_t deviceId, uint16_t resolution, uint8_t channelCo
 uint8_t rcLib::Package::encode() {
     buffer[0] = RC_LIB_START;
     buffer[1] = ++globalPackageUid;
-    buffer[2] = TRANSMITTER_ID;
+    buffer[2] = transmitterId;
+    mesh = mesh?1:0;
     buffer[3] = static_cast<uint8_t>(resolutionStepsToKey(resolution) |
                                      channelCountToKey(channelCount) << 3 |
                                      0 << 6 |
-                                     0 << 7);
+                                     mesh << 7);
+    if(mesh){
+        buffer[4] = mesh | routingLength << 1;
+    }
+
     uint8_t resBits = resolutionStepsToBitCount(resolution);
 
     uint16_t dataSize = resBits * channelCount;
@@ -33,15 +38,14 @@ uint8_t rcLib::Package::encode() {
 
     for(int c=0; c<dataSize; c++){
         for(int b=0; b<8 && (c*8+b)<(resolution*channelCount); b++){
-
             uint8_t bit = static_cast<uint8_t>(channelData[(c * 8 + b) / resBits] & (0b1 << ((c * 8 + b) % resBits)) ? 1:0);
-            buffer[4+c] |= bit << b;
+            buffer[4+c+mesh] |= bit << b;
         }
     }
 
-    bufCount = 4+dataSize+2;
-    buffer[4+dataSize] = calculateChecksum(buffer, bufCount);
-    buffer[4+dataSize+1] = RC_LIB_END;
+    bufCount = 4+dataSize+2+mesh;
+    buffer[4+dataSize+mesh] = calculateChecksum(buffer, bufCount);
+    buffer[4+dataSize+mesh+1] = RC_LIB_END;
 
     return bufCount;
 }
@@ -71,7 +75,6 @@ uint8_t rcLib::Package::decode(uint8_t data) {
         case 3: // Configuration
             this->resolution = keyToResolutionSteps(data&0b111);
             this->channelCount = keyToChannelCount((data&0b111000) >> 3);
-            this->mesh = static_cast<uint8_t>(false);
 
             for(int c=0; c<channelCount; c++){
                 channelData[c] = 0;
@@ -88,6 +91,7 @@ uint8_t rcLib::Package::decode(uint8_t data) {
             this->mesh = data & 0b1;
             this->routingLength = (data & (0b111<<1)) >> 1;
             receiveStateMachineState = 5;
+            dataByteCount = 0;
             break;
         case 5: // Data
             {
@@ -115,6 +119,7 @@ uint8_t rcLib::Package::decode(uint8_t data) {
             break;
         case 7: // End byte
                 if(data == RC_LIB_END) {
+                    receiveStateMachineState = 0;
                     bufCount++;
                     return static_cast<uint8_t>(true);
                 } else {

@@ -7,9 +7,10 @@
 #define RC_LIB_START 0xC9 //201_{10}
 #define  RC_LIB_END 0x93 //147_{10}
 #define DATA_BUFFER_SIZE 64
-#define TRANSMITTER_ID 5
 
-#include <cstdint>
+#ifndef __uint32_t_defined
+    #include <cstdint>
+#endif
 
 namespace rcLib{
     class Package{
@@ -21,10 +22,10 @@ namespace rcLib{
 
             /**
              * Constructor to use when creating a new package
-             * @param deviceId   The id of the current device
+             * @param channelCount  The number of channels used
              * @param resolution The resolution (steps) of each channel.
              */
-            Package(uint8_t deviceId, uint16_t resolution, uint8_t channelCount);
+            Package(uint16_t resolution, uint8_t channelCount);
 
             /**
              * Convert the package into a serialised byte-array for sending
@@ -131,5 +132,6 @@ namespace rcLib{
             uint8_t routingLength;
 
             static uint8_t globalPackageUid;
+            static uint8_t transmitterId;
     };
 }

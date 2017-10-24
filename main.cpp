@@ -24,11 +24,12 @@ public:
 int main() {
     Connection connection;
 
-    rcLib::Package packageSend(37, 32, 4);
+    rcLib::Package packageSend(32, 4);
     packageSend.setChannel(0, 1);
     packageSend.setChannel(1, 2);
     packageSend.setChannel(2, 3);
     packageSend.setChannel(3, 4);
+    packageSend.setMeshProperties(true, 7);
 
     uint8_t size = packageSend.encode();
     uint8_t* encoded = packageSend.getEncodedData();
