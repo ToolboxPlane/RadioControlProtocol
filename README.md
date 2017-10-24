@@ -1,4 +1,4 @@
-# [NAME TODO]
+# RadioControl-Protocol
 Fast and extensible communication over various serial-interfaces. Primarily designed for radio-controlled models, mesh capable.
 
 # Example Application
