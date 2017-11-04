@@ -5,6 +5,7 @@
 
 uint8_t rcLib::Package::globalPackageUid = 0;
 uint8_t rcLib::Package::transmitterId = 0;
+uint8_t rcLib::Package::errorCount = 0;
 
 rcLib::Package::Package() = default;
 
@@ -13,7 +14,6 @@ rcLib::Package::Package(uint16_t resolution, uint8_t channelCount) {
     this->channelCount = channelCount;
 }
 
-// @TODO Mesh
 uint8_t rcLib::Package::encode() {
     buffer[0] = RC_LIB_START;
     buffer[1] = ++globalPackageUid;
@@ -21,7 +21,7 @@ uint8_t rcLib::Package::encode() {
     mesh = mesh?1:0;
     buffer[3] = static_cast<uint8_t>(resolutionStepsToKey(resolution) |
                                      channelCountToKey(channelCount) << 3 |
-                                     0 << 6 |
+                                     (errorCount>0?1:0) << 6 |
                                      mesh << 7);
     if(mesh){
         buffer[4] = mesh | routingLength << 1;
@@ -66,7 +66,6 @@ uint8_t rcLib::Package::decode(uint8_t data) {
             globalPackageUid = this->uid;
 
             receiveStateMachineState = 2;
-
             break;
         case 2: // Transmitter Id
             this->tid = data;
@@ -116,16 +115,21 @@ uint8_t rcLib::Package::decode(uint8_t data) {
         case 6: // Checksum
             this->checksum = data;
             receiveStateMachineState = 7;
+
+            if(isChecksumCorrect()){
+                errorCount += 4;
+            }
             break;
         case 7: // End byte
-                if(data == RC_LIB_END) {
-                    receiveStateMachineState = 0;
-                    bufCount++;
-                    return static_cast<uint8_t>(true);
-                } else {
-                    receiveStateMachineState = 0;
-                    return static_cast<uint8_t>(false);
-                }
+            if(data == RC_LIB_END) {
+                receiveStateMachineState = 0;
+                bufCount++;
+                return static_cast<uint8_t>(true);
+            } else {
+                errorCount += 4;
+                receiveStateMachineState = 0;
+                return static_cast<uint8_t>(false);
+            }
         default:
             receiveStateMachineState = 0;
             break;

@@ -133,5 +133,6 @@ namespace rcLib{
 
             static uint8_t globalPackageUid;
             static uint8_t transmitterId;
+            static uint8_t errorCount;
     };
 }
