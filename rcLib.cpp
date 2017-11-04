@@ -195,12 +195,18 @@ uint8_t rcLib::Package::calculateChecksum(uint8_t* data, uint8_t size) {
     for(int c=0; c<size-3; c++){
         copy[c] = data[c+1];
     }
+    size -= 3;
 
-    for(uint8_t head = size-3; head > 0; head--){
+    for(int diff=1; diff < size; diff *= 2){
+        for(int c=0; c<size-diff; c+=diff){
+            copy[c] ^= copy[c + diff];
+        }
+    }
+    /*for(uint8_t head = size-3; head > 0; head--){
         for(uint8_t c = 0; c<head-1; c++){
             copy[c] = copy[c] ^ copy[c+1];
         }
-    }
+    }*/
 
     return copy[0];
 }
