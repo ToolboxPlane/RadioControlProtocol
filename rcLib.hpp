@@ -8,7 +8,7 @@
 #define  RC_LIB_END 0x93 //147_{10}
 #define DATA_BUFFER_SIZE 64
 
-#ifndef __uint32_t_defined
+#ifdef __linux__
     #include <cstdint>
 #endif
 
