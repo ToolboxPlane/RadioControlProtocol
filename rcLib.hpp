@@ -8,12 +8,8 @@
 #define  RC_LIB_END 0x93 //147_{10}
 #define DATA_BUFFER_SIZE 64
 
-// @TODO
-#ifdef __linux__
-    #include <cstdint>
-#else
-    #include "Arduino.h"
-#endif
+#include <stdint.h>
+
 
 namespace rcLib{
     class Package{
