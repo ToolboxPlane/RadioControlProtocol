@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdint>
 
-#include "rcLib.hpp"
+#include "../rcLib.hpp"
 
 class Connection{
 public:
@@ -33,6 +33,8 @@ int main() {
 
     uint8_t size = packageSend.encode();
     uint8_t* encoded = packageSend.getEncodedData();
+
+    encoded[6] ^= 0b1 << 1;
 
     rcLib::Package packageReceive;
     int c=0;

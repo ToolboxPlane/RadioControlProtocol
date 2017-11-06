@@ -3,7 +3,7 @@ project(LoRaLib)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp
+set(SOURCE_FILES examples/main.cpp
         rcLib.hpp
         rcLib.cpp)
 add_executable(LoRaLib ${SOURCE_FILES})
