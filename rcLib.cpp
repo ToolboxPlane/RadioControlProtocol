@@ -197,18 +197,13 @@ uint8_t rcLib::Package::calculateChecksum(uint8_t* data, uint8_t size) {
     }
     size -= 3;
 
-    for(int diff=1; diff < size; diff *= 2){
-        for(int c=0; c<size-diff; c+=diff){
-            copy[c] ^= copy[c + diff];
-        }
-    }
-    /*for(uint8_t head = size-3; head > 0; head--){
-        for(uint8_t c = 0; c<head-1; c++){
-            copy[c] = copy[c] ^ copy[c+1];
-        }
-    }*/
+    uint8_t checksum = 0;
 
-    return copy[0];
+    for(int c=0; c<size; c++){
+        checksum ^= copy[c];
+    }
+
+    return checksum;
 }
 
 uint8_t rcLib::Package::calculateChecksum(void) {
