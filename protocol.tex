@@ -212,10 +212,11 @@ Transmitter $\to$ Transmitter $\to$ Plane
      still correct.
 
     \subsubsection{Algorithm}
-     Now take every but the last byte and do a XOR Operation with the next byte.
-     Every operation returns a new byte, so your list which was initially $n$
-     bytes long now is only $n-1$ bytes long. Repeat this Process until the list
-     is only one byte long, this byte is your checksum.
+     The checksum is similar to a normal parity bit. To calculate the checksum
+     take your list and count for every bit how often it is 1 across all bytes,
+     if it is odd the corresponding bit in the checksum is 1 else 0.
+     So the $n$-th bit of your checksum byte is the parity bit of all $n$-th
+     bits of your list.
 
     \subsubsection{End byte}
      The end byte is one byte which is always $93_\text{HEX}$.
