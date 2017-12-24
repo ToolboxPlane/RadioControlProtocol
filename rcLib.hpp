@@ -105,8 +105,8 @@ namespace rcLib{
              */
             uint8_t* getEncodedData();
 
-
-        private:
+            static uint8_t transmitterId;
+    private:
             uint8_t calculateChecksum(uint8_t* data, uint8_t size);
             uint8_t calculateChecksum(void);
 
@@ -131,7 +131,6 @@ namespace rcLib{
             uint8_t routingLength;
 
             static uint8_t globalPackageUid;
-            static uint8_t transmitterId;
             static uint8_t errorCount;
     };
 }
