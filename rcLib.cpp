@@ -37,6 +37,7 @@ uint8_t rcLib::Package::encode() {
     }
 
     for(int c=0; c<dataSize; c++){
+        buffer[4+c+mesh] = 0;
         for(int b=0; b<8 && (c*8+b)<(resolution*channelCount); b++){
             uint8_t bit = static_cast<uint8_t>(channelData[(c * 8 + b) / resBits] & (0b1 << ((c * 8 + b) % resBits)) ? 1:0);
             buffer[4+c+mesh] |= bit << b;
@@ -116,7 +117,7 @@ uint8_t rcLib::Package::decode(uint8_t data) {
             this->checksum = data;
             receiveStateMachineState = 7;
 
-            if(isChecksumCorrect()){
+            if(!isChecksumCorrect()){
                 errorCount += 4;
             }
             break;
@@ -190,17 +191,10 @@ void rcLib::Package::countNode() {
 
 //@TODO Check
 uint8_t rcLib::Package::calculateChecksum(uint8_t* data, uint8_t size) {
-    // Deep copy, is there a better way?
-    uint8_t copy[DATA_BUFFER_SIZE];
-    for(int c=0; c<size-3; c++){
-        copy[c] = data[c+1];
-    }
-    size -= 3;
-
     uint8_t checksum = 0;
 
-    for(int c=0; c<size; c++){
-        checksum ^= copy[c];
+    for(uint16_t c=0; c<size-3; c++){
+        checksum ^= data[c+1];
     }
 
     return checksum;
