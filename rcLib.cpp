@@ -86,6 +86,7 @@ uint8_t rcLib::Package::decode(uint8_t data) {
             } else {
                 receiveStateMachineState = 5;
             }
+            dataByteCount = 0;
             break;
         case 4: // Mesh
             this->mesh = data & 0b1;
