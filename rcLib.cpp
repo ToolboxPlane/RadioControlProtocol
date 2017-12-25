@@ -165,7 +165,7 @@ uint16_t rcLib::Package::getResolution() {
 }
 
 uint16_t rcLib::Package::getChannel(uint8_t channel) {
-    if(channel > 0 && channel <= this->channelCount){
+    if(channel >= 0 && channel <= this->channelCount){
         return this->channelData[channel];
     } else {
         return static_cast<uint16_t>(-1);

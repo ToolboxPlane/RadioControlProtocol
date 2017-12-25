@@ -6,7 +6,7 @@
 
 #define RC_LIB_START 0xC9 //201_{10}
 #define  RC_LIB_END 0x93 //147_{10}
-#define DATA_BUFFER_SIZE 64
+#define DATA_BUFFER_SIZE 20 
 
 #include <stdint.h>
 
