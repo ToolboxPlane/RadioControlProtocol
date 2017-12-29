@@ -105,6 +105,12 @@ namespace rcLib{
              */
             uint8_t* getEncodedData();
 
+            /**
+             * Read the amount of channels transmitted by the sender
+             * @return the number of channels
+             */
+            uint16_t getChannelCount();
+
             static uint8_t transmitterId;
     private:
             uint8_t calculateChecksum(uint8_t* data, uint8_t size);
