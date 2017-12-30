@@ -10,7 +10,6 @@
 
 #include <stdint.h>
 
-
 namespace rcLib{
     class Package{
         public:
@@ -113,14 +112,7 @@ namespace rcLib{
 
             static uint8_t transmitterId;
     private:
-            uint8_t calculateChecksum(uint8_t* data, uint8_t size);
             uint8_t calculateChecksum(void);
-
-            uint8_t resolutionStepsToKey(uint16_t steps);
-            uint8_t channelCountToKey(uint16_t channelCount);
-            uint16_t keyToResolutionSteps(uint8_t key);
-            uint16_t keyToChannelCount(uint8_t key);
-            uint8_t resolutionStepsToBitCount(uint16_t steps);
 
             uint16_t channelData[DATA_BUFFER_SIZE];
             uint8_t buffer[DATA_BUFFER_SIZE];
@@ -135,6 +127,14 @@ namespace rcLib{
 
             uint8_t mesh;
             uint8_t routingLength;
+
+            static uint8_t calculateChecksum(uint8_t* data, uint8_t size);
+
+            static uint8_t resolutionStepsToKey(uint16_t steps);
+            static uint8_t channelCountToKey(uint16_t channelCount);
+            static uint16_t keyToResolutionSteps(uint8_t key);
+            static uint16_t keyToChannelCount(uint8_t key);
+            static uint8_t resolutionStepsToBitCount(uint16_t steps);
 
             static uint8_t globalPackageUid;
             static uint8_t errorCount;

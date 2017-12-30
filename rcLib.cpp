@@ -87,7 +87,6 @@ uint8_t rcLib::Package::decode(uint8_t data) {
             } else {
                 receiveStateMachineState = 5;
             }
-
             dataByteCount = 0;
             break;
         case 4: // Mesh
@@ -193,7 +192,6 @@ void rcLib::Package::countNode() {
     this->routingLength--;
 }
 
-//@TODO Check
 uint8_t rcLib::Package::calculateChecksum(uint8_t* data, uint8_t size) {
     uint8_t checksum = 0;
 
@@ -325,9 +323,4 @@ uint16_t rcLib::Package::keyToChannelCount(uint8_t key) {
 
 uint8_t *rcLib::Package::getEncodedData() {
     return buffer;
-}
-
-uint16_t rcLib::Package::getChannelCount()
-{
-    return this->channelCount;
 }
