@@ -12,6 +12,7 @@ rcLib::Package::Package() = default;
 rcLib::Package::Package(uint16_t resolution, uint8_t channelCount) {
     this->resolution = resolution;
     this->channelCount = channelCount;
+    this->mesh = false;
 }
 
 uint8_t rcLib::Package::encode() {
@@ -90,7 +91,7 @@ uint8_t rcLib::Package::decode(uint8_t data) {
             break;
         case 4: // Mesh
             this->mesh = data & 0b1;
-            this->routingLength = (data & (0b111<<1)) >> 1;
+            this->routingLength = (data & (0b1111<<1)) >> 1;
             receiveStateMachineState = 5;
             dataByteCount = 0;
             break;
@@ -126,6 +127,7 @@ uint8_t rcLib::Package::decode(uint8_t data) {
             if(data == RC_LIB_END) {
                 receiveStateMachineState = 0;
                 bufCount++;
+                errorCount--;
                 return static_cast<uint8_t>(true);
             } else {
                 errorCount += 4;
