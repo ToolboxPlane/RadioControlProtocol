@@ -13,6 +13,7 @@ rcLib::Package::Package(uint16_t resolution, uint8_t channelCount) {
     this->resolution = resolution;
     this->channelCount = channelCount;
     this->mesh = false;
+    this->discoverState = 0;
 }
 
 uint8_t rcLib::Package::encode() {
@@ -25,7 +26,7 @@ uint8_t rcLib::Package::encode() {
                                      (errorCount>0?1:0) << 6 |
                                      mesh << 7);
     if(mesh){
-        buffer[4] = routingLength;
+        buffer[4] = routingLength | (discoverState == 1) << 5  | (discoverState == 2) << 6;
     }
 
     uint8_t resBits = resolutionStepsToBitCount(resolution);
@@ -91,8 +92,13 @@ uint8_t rcLib::Package::decode(uint8_t data) {
             break;
         case 4: // Mesh
             this->routingLength = data & 0b1111;
+            this->discoverState = (data & (0b11 << 5)) >> 5;
             this->mesh = (this->routingLength > 0);
-            receiveStateMachineState = 5;
+            if(this->discoverState == 1) {
+                receiveStateMachineState = 6;
+            } else {
+                receiveStateMachineState = 5;
+            }
             break;
         case 5: // Data
             {
@@ -175,6 +181,10 @@ uint16_t rcLib::Package::getChannel(uint8_t channel) {
     }
 }
 
+uint16_t rcLib::Package::getChannelCount() {
+    return channelCount;
+}
+
 uint8_t rcLib::Package::isChecksumCorrect() {
     return static_cast<uint8_t>(this->checksum == this->calculateChecksum());
 }
@@ -189,6 +199,49 @@ uint8_t rcLib::Package::needsForwarding() {
 
 void rcLib::Package::countNode() {
     this->routingLength--;
+}
+
+uint8_t rcLib::Package::isDiscoverMessage() {
+    return this->discoverState == 1;
+}
+
+
+uint8_t rcLib::Package::isDiscoverResponse() {
+    return this->discoverState == 2;
+}
+
+void rcLib::Package::setDiscoverMessage() {
+    this->discoverState = 1;
+    this->channelCount = 0;
+    this->mesh = 1;
+}
+
+void rcLib::Package::makeDiscoverResponse(Package responses[], uint8_t len) {
+    this->resolution = 256;
+    this->channelCount = 1;
+    this->mesh = 1;
+    this->discoverState = 2;
+
+    uint16_t tidCount = 0;
+    for(uint8_t r=0; r<len; r++) {
+        for(uint16_t c=0; c<responses[r].getChannelCount(); c++) {
+            if(responses[r].getChannel(c) != 0) {
+                if(tidCount+1 > this->channelCount) {
+                    this->channelCount *= 2;
+                }
+
+                this->setChannel(tidCount++, responses[r].getChannel(c));
+            }
+        }
+    }
+
+    if(tidCount+1 > this->channelCount) {
+        this->channelCount *= 2;
+    }
+    this->setChannel(tidCount++, this->transmitterId);
+    for(uint16_t c=tidCount; c<this->channelCount; c++) {
+        this->setChannel(c, 0);
+    }
 }
 
 uint8_t rcLib::Package::calculateChecksum(uint8_t* data, uint8_t size) {
@@ -230,6 +283,7 @@ uint8_t rcLib::Package::resolutionStepsToKey(uint16_t steps) {
 
 uint8_t rcLib::Package::channelCountToKey(uint16_t channelCount) {
     switch(channelCount){
+        case 0:
         case 1:
             return 0b000;
         case 2:
