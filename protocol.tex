@@ -13,7 +13,7 @@
 \setlength\parindent{0pt}
 
 \title{RadioControl-Protocol}
-\subtitle{Rev.1.1}
+\subtitle{Rev.1.2}
 \author{Paul Nykiel}
 
 \begin{document}
@@ -46,7 +46,7 @@ data.
 
 \section{Mesh behavior}
 The sender of a message is the one deciding wheter a package should be mesh
-package or a normal package. A normal package gets tranmitted by the sender
+package or a normal package. A normal package gets transmitted by the sender
 and every device in reach receives the message and can use the data.
 
 
@@ -61,9 +61,21 @@ sufficient sized ring buffer which saves the last UIDs of the packages forwarded
 the size is determined by the amount of packages per time, in a normal application
 the size should be between 64 and 128.
 
-In complex applications where two nodes can be connected via multiple
-paths it is not guaranteed for the communication to work, in general this should be
-avoided.
+\subsection{Mesh initialization}
+If necessary a node can perform a recursive discover to find out which device can be reached via
+an interface with a maximum amount of hops (routing length). This method is not intended for networks where multiple paths can reach the same
+targets.
+
+The node sends a discover message via all connected interfaces. The message gets forwarded to all
+nodes in the network with consideration of the routing length. When a device with only one interface is reached or the routing length is zero the node sends a discover-response with its transmitter-ID as payload via the receiving interface. Every node that forwarded the discover message waits for a discover-response from every interface and then sends a discover response containing all the transmitter-IDs it received and its own ID via the interface that was used for the discover-message. In the end the initial node receives a package with the ID of all transmitters that can be reached via a certain interface in a certain maximum amount of hops.
+
+\subsubsection{Discover Message}
+A mesh discover message consists only of the header, the configuration and the footer, there is no
+channel data. A discover message is identified by the discover-message bit in the mesh-configuration byte.
+
+\subsubsection{Discover Response}
+A mesh discover-response is a normal package with the channel resolution set to 8-bits (256 Steps). The channel count is as small as possible. Every channel value that is non zero represents
+a transmitter-ID.
 
 \section{Package structure}
 Every package consists of four major parts:
@@ -99,7 +111,8 @@ The start byte is one byte which is always ${C9}_\text{HEX}$.
 \subsubsection{Transmitter-ID}
  A persistent ID which should be unique to the transmitter. Optimally it
  should be easily configurable by the user, for example via a configuration
- file, a settings menu or DIP-Switches on the module.
+ file, a settings menu or DIP-Switches on the module. The transmitter-ID zero
+ is reserved for mesh discovery.
 
 \subsection{Configuration}
 The configuration consists of at least one byte. The 7-th bit  of every configuration byte is used to keep track of how many configuration bytes there are.
@@ -173,7 +186,9 @@ byte and not a data byte.
 The second byte consists of the following bits:
 \begin{itemize}
   \item Bit 0-3: Routing Length
-  \item Bit 5-6: unused
+  \item Bit 4: Discover Message
+  \item Bit 5: Discover Response
+  \item Bit 6: unused
   \item Bit 7: Following
 \end{itemize}
 
@@ -183,6 +198,13 @@ initial sender sets the value and every node decrements the value. If the
 value reaches zero, the package doesn't get forwarded.
 
 The value zero means that this package is not a mesh package.
+
+\subsubsection{Discover Message}
+This flag denotes that the current message is a discover message. This implies that there is no
+channel data.
+
+\subsubsection{Discover Response}
+This flag denotes that the current message is a discover response. This implies that each channel consists of 8-bits.
 
 \subsubsection{Following}
 This byte is a flag whether the following byte is still a configuration
@@ -222,5 +244,6 @@ The end byte is one byte which is always $93_\text{HEX}$.
 \chapter{Revision-History}
 \begin{itemize}
   \item Rev.1.1 Removed Mesh-Enabled Flag and replaced with Routing Length. Clarified forwarding.
+  \item Rev.1.2 Added Discover-Message and Discover-Response
 \end{itemize}
 \end{document}
