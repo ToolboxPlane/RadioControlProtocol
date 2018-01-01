@@ -3,5 +3,8 @@ cmake*/
 .latex/
 .latex.json
 protocol.synctex.gz
-
+*.fls
+*.log
+*.fdb_latexmk
+*.toc
 /.latex/

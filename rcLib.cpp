@@ -25,7 +25,7 @@ uint8_t rcLib::Package::encode() {
                                      (errorCount>0?1:0) << 6 |
                                      mesh << 7);
     if(mesh){
-        buffer[4] = mesh | routingLength << 1;
+        buffer[4] = routingLength;
     }
 
     uint8_t resBits = resolutionStepsToBitCount(resolution);
@@ -90,10 +90,9 @@ uint8_t rcLib::Package::decode(uint8_t data) {
             dataByteCount = 0;
             break;
         case 4: // Mesh
-            this->mesh = data & 0b1;
-            this->routingLength = (data & (0b1111<<1)) >> 1;
+            this->routingLength = data & 0b1111;
+            this->mesh = (this->routingLength > 0);
             receiveStateMachineState = 5;
-            dataByteCount = 0;
             break;
         case 5: // Data
             {
