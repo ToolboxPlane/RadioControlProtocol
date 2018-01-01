@@ -6,3 +6,9 @@ Using the mesh capabilities of the protocol multiple remotes can be used by conn
 
 # Protocol
 All documentation can be found in the [protocol.pdf](https://github.com/aul12/RcViech/blob/master/protocol.pdf) file.
+
+
+# Implementations
+ * C++: this repository
+ * C: [FlightControllerSoftware](https://github.com/ToolboxPlane/FlightControllerSoftware)
+ * Go: [github.com/ottojo/rcLib](https://github.com/ottojo/rcLib)
