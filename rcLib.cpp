@@ -39,7 +39,7 @@ uint8_t rcLib::Package::encode() {
 
     for(int c=0; c<dataSize; c++){
         buffer[4+c+mesh] = 0;
-        for(int b=0; b<8 && (c*8+b)<(resolution*channelCount); b++){
+        for(int b=0; b<8 && (c*8+b)<(resBits*channelCount); b++){
             uint8_t bit = static_cast<uint8_t>(channelData[(c * 8 + b) / resBits] & (0b1 << ((c * 8 + b) % resBits)) ? 1:0);
             buffer[4+c+mesh] |= bit << b;
         }
