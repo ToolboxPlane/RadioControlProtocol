@@ -1,8 +1,11 @@
 /**
  * @file lib.hpp
  * @author Paul Nykiel
- * @version 1.2
+ * @version 1.2.1
  */
+
+#ifndef _RC_LIB_PACKAGE_
+#define _RC_LIB_PACKAGE_
 
 #define RC_LIB_START 0xC9 //201_{10}
 #define  RC_LIB_END 0x93 //147_{10}
@@ -162,3 +165,4 @@ namespace rcLib{
             static uint8_t errorCount;
     };
 }
+#endif
