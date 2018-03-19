@@ -9,7 +9,10 @@
 
 #define RC_LIB_START 0xC9 //201_{10}
 #define  RC_LIB_END 0x93 //147_{10}
-#define DATA_BUFFER_SIZE 20 
+
+#ifndef RC_LIB_PACKAGE_BUFFER_SIZE
+    #define RC_LIB_PACKAGE_BUFFER_SIZE 64
+#endif
 
 #include <stdint.h>
 
@@ -138,8 +141,8 @@ namespace rcLib{
     private:
             uint8_t calculateChecksum(void);
 
-            uint16_t channelData[DATA_BUFFER_SIZE];
-            uint8_t buffer[DATA_BUFFER_SIZE];
+            uint16_t channelData[RC_LIB_PACKAGE_BUFFER_SIZE];
+            uint8_t buffer[RC_LIB_PACKAGE_BUFFER_SIZE];
             uint8_t bufCount;
 
             uint8_t uid; ///< Unique (package) id
