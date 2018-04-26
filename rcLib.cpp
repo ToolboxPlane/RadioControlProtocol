@@ -14,12 +14,13 @@ rcLib::Package::Package(uint16_t resolution, uint8_t channelCount) {
     this->channelCount = channelCount;
     this->mesh = false;
     this->discoverState = 0;
+    this->tid = transmitterId;
 }
 
 uint8_t rcLib::Package::encode() {
     buffer[0] = RC_LIB_START;
     buffer[1] = ++globalPackageUid;
-    buffer[2] = transmitterId;
+    buffer[2] = tid;
     mesh = mesh?1:0;
     buffer[3] = static_cast<uint8_t>(resolutionStepsToKey(resolution) |
                                      channelCountToKey(channelCount) << 3 |
@@ -376,4 +377,8 @@ uint16_t rcLib::Package::keyToChannelCount(uint8_t key) {
 
 uint8_t *rcLib::Package::getEncodedData() {
     return buffer;
+}
+
+void rcLib::Package::setDeviceId(uint8_t deviceId) {
+    this->tid = deviceId;
 }

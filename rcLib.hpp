@@ -84,6 +84,13 @@ namespace rcLib{
             uint8_t getDeviceId(void);
 
             /**
+             * Set the id of the original sender, this function should only be called if the deviceId != transmitterId.
+             * This is the case if you want to simulate packages.
+             * @param deviceId
+             */
+            void setDeviceId(uint8_t deviceId);
+
+            /**
              * Check if the calculated checksum equals the checksum of the package.
              * @return  a boolean whether the checksum is correct
              */
