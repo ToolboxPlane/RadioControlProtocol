@@ -145,7 +145,7 @@ namespace rcLib{
             void makeDiscoverResponse(Package responses[], uint8_t len);
 
             static uint8_t transmitterId;
-    private:
+    protected:
             uint8_t calculateChecksum(void);
 
             uint16_t channelData[RC_LIB_PACKAGE_BUFFER_SIZE];
