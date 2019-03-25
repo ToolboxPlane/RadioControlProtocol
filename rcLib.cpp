@@ -150,13 +150,11 @@ uint8_t rcLib::Package::decode(uint8_t data) {
 }
 
 void rcLib::Package::setChannel(uint8_t channel, uint16_t data) {
-    if(data < 0){
-        data = 0;
-    } else if(data >= this->resolution){
+    if(data >= this->resolution){
         data = static_cast<uint16_t>(this->resolution - 1);
     }
 
-    if(channel >= 0 && channel < this->channelCount) {
+    if(channel < this->channelCount) {
         this->channelData[channel] = data;
     }
 }
@@ -175,7 +173,7 @@ uint16_t rcLib::Package::getResolution() {
 }
 
 uint16_t rcLib::Package::getChannel(uint8_t channel) {
-    if(channel >= 0 && channel <= this->channelCount){
+    if(channel <= this->channelCount){
         return this->channelData[channel];
     } else {
         return static_cast<uint16_t>(-1);
