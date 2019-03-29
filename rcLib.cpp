@@ -55,9 +55,6 @@ uint8_t rcLib::Package::encode() {
 }
 
 uint8_t rcLib::Package::decode(uint8_t data) {
-    static uint8_t receiveStateMachineState = 0;
-    static uint8_t dataByteCount = 0;
-
     switch(receiveStateMachineState){
         case 0: // Initial state
             bufCount = 0;

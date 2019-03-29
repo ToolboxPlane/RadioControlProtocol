@@ -163,6 +163,9 @@ namespace rcLib{
             uint8_t routingLength;
             uint8_t discoverState; ///< Zero means no discovery-message, one is a discovery message, two a discovery response
 
+            uint8_t receiveStateMachineState = 0;
+            uint8_t dataByteCount = 0;t
+
             static uint8_t calculateChecksum(uint8_t* data, uint8_t size);
 
             static uint8_t resolutionStepsToKey(uint16_t steps);
