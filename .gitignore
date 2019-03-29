@@ -8,3 +8,4 @@ protocol.synctex.gz
 *.fdb_latexmk
 *.toc
 /.latex/
+*.aux

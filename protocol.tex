@@ -13,7 +13,7 @@
 \setlength\parindent{0pt}
 
 \title{RadioControl-Protocol}
-\subtitle{Rev.1.2}
+\subtitle{Rev.1.3}
 \author{Paul Nykiel}
 
 \begin{document}
@@ -23,43 +23,59 @@
 
 \pagebreak
 
-\chapter{Introduction}
-  Fast and extensible communication over various serial-interfaces. Primarily
-  designed for radio-controlled models, mesh capable.
+\chapter{Abstract}
+Fast and extensible communication over various serial-interfaces. Primarily
+designed for radio-controlled models, mesh capable.
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in
+RFC 2119.
 
 \section{Example Application}
 \subsection{Trainer}
 Transmitter $\to$ Transmitter $\to$ Plane
 \subsection{Long Range}
-  Long Range: Multiple Transmitters, Drone as Repeater. TCP for Transmitters.
+Long Range: Multiple Transmitters, Drone as Repeater. Network for Transmitters.
 
 \chapter{Protocol}
 The protocol is designed for serial interfaces, the data is binary encoded to
 optimize for slow connections. The protocol consists of packages, one package
 contains all channel data.
 
+\subsection{Package}
+A package is a unit in which all information at a certain time point is collected.
+The protocol is responsible for encoding and decoding the data into a package.
+Furthermore the package is responsible for error-detection (not correction), it
+is not responsible for retransmitting data or the order between packages.
+
+\subsection{Channel}
+The data of a package is accumulated in channels. Every package consists of a fixed
+number of channels with every channel having the same (fixed) resolution.
+
+
 \section{Timing}
 A new package should be transmitted by the sender at a rate of 50Hz (every
 20ms) which is the rate a normal Servo or ESC gets signals at. The minimum
-time between each package should be 10ms to allow every device to parse the
+time between each package must be large enough to allow every device to parse the
 data.
 
 \section{Mesh behavior}
 The sender of a message is the one deciding wheter a package should be mesh
 package or a normal package. A normal package gets transmitted by the sender
-and every device in reach receives the message and can use the data.
+and every device in which is reachable via a direct link receives the message and can use the data.
 
 
-In a mesh application the sender needs to set the routing length flag to a non zero value.
-Furthermore the sender needs to specify with the routing length field the maximum amount of
+In a mesh application the sender must set the routing length flag to a non zero value.
+Furthermore the sender must specify via the routing length field the maximum amount of
 nodes the package passes by.
-Each recipient resends the message over every interface but the receiving one and decreases the routing length value by one
+Each recipient should resend the message over every interface but the receiving one and decreases the routing length value by one
 until the routing length reaches the value zero. To avoid that the same
 packages passes multiple nodes the same time every node
-needs to keep track of the packages it forwarded, this is done by having a
+should keep track of the packages it forwarded, this is done by having a
 sufficient sized ring buffer which saves the last UIDs of the packages forwarded,
-the size is determined by the amount of packages per time, in a normal application
-the size should be between 64 and 128.
+the size is determined by the amount of packages per time,
+the may be between 64 and 128.
 
 \subsection{Mesh initialization}
 If necessary a node can perform a recursive discover to find out which device can be reached via
@@ -67,7 +83,7 @@ an interface with a maximum amount of hops (routing length). This method is not 
 targets.
 
 The node sends a discover message via all connected interfaces. The message gets forwarded to all
-nodes in the network with consideration of the routing length. When a device with only one interface is reached or the routing length is zero the node sends a discover-response with its transmitter-ID as payload via the receiving interface. Every node that forwarded the discover message waits for a discover-response from every interface and then sends a discover response containing all the transmitter-IDs it received and its own ID via the interface that was used for the discover-message. In the end the initial node receives a package with the ID of all transmitters that can be reached via a certain interface in a certain maximum amount of hops.
+nodes in the network with consideration of the routing length. When a device with only one interface is reached or the routing length field is zero the node sends a discover-response with its transmitter-ID as payload via the receiving interface. Every node that forwarded the discover message waits for a discover-response from every interface and then sends a discover response containing all the transmitter-IDs it received and its own ID via the interface that was used for the discover-message. In the end the initial node receives a package with the ID of all transmitters that can be reached via a certain interface in a certain maximum amount of hops.
 
 \subsubsection{Discover Message}
 A mesh discover message consists only of the header, the configuration and the footer, there is no
@@ -176,7 +192,9 @@ listed in table~\ref{fig:channelValues}.
 
 \subsubsection{Error}
 If a device registers an error (checksum, timeout during package
-transmission) this flag is set for the next 4 packages send by this device.
+transmission) this flag is set for the next 4 packages send by this device,
+if another error occurs before all 4 packages are sent the number of packages with the error flag set 
+gets increased by 4.
 
 \subsubsection{Following}
 This byte is a flag whether the following byte is still a configuration
@@ -226,16 +244,16 @@ The footer consists of two bytes Checksum End byte
 
 \subsubsection{Checksum}
 For the checksum think of the transmitted data as list starting with the
-unique-ID and ending with the last data byte. The checksum is once
-calculated by the sender and once by the recipient to verify the data is
-still correct.
+unique-ID and ending with the last data byte. The start-byte, end-byte and checksum are not used for the calculation. 
+The checksum is once calculated by the sender and once by the recipient to verify the data is
+still correct. A implementation may still accept a package even tho the checksum is incorrect.
 
 \subsubsection{Algorithm}
 The checksum is similar to a normal parity bit. To calculate the checksum
-take your list and count for every bit how often it is 1 across all bytes,
+take the list of bytes and count for every bit position how often it is set across all bytes,
 if it is odd the corresponding bit in the checksum is 1 else 0.
 So the $n$-th bit of your checksum byte is the parity bit of all $n$-th
-bits of your list.
+bits of the byte-list.
 
 \subsubsection{End byte}
 The end byte is one byte which is always $93_\text{HEX}$.
@@ -245,5 +263,6 @@ The end byte is one byte which is always $93_\text{HEX}$.
 \begin{itemize}
   \item Rev.1.1 Removed Mesh-Enabled Flag and replaced with Routing Length. Clarified forwarding.
   \item Rev.1.2 Added Discover-Message and Discover-Response
+  \item Rev.1.3 Clarification for error count and checksum (\#14 and \#15), added reference to RFC 2119
 \end{itemize}
 \end{document}
