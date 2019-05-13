@@ -9,7 +9,7 @@ All documentation can be found in the [protocol.pdf](https://github.com/aul12/Rc
 
 
 # Implementations
- * C++: this repository
+ * C++: [ToolboxPlane/RadioControlProtocolC](https://github.com/ToolboxPlane/RadioControlProtocolCpp)
  * C: [ToolboxPlane/RadioControlProtocolC](https://github.com/ToolboxPlane/RadioControlProtocolC)
  * Python [ToolboxPlane/RadioControlProtocolPy](https://github.com/ToolboxPlane/RadioControlProtocolPy)
  * Go: [github.com/ottojo/rcLib](https://github.com/ottojo/rcLib)
