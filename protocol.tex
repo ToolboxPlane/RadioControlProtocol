@@ -235,9 +235,12 @@ the resolution and the channel count:
   \text{size} = \left\lceil{\frac{\text{resolution} \cdot \text{Channel count}}{8}} \right\rceil
 \end{equation}
 
-The data is just queued together so the first r (with r being the channel
+The data is queued together so the first $r$ (with $r$ being the channel
 resolution) bits are the first channel, bits r+1 to r*2 are the second
-until the last channel. If there are unused bits left at the end they shall be zero.
+until the last channel. In a channel, the data is ordered according to the little endian format,
+this means the LSB is the first bit, the MSB the last bit.
+
+If there are unused bits left at the end they shall be zero.
 
 \subsection{Footer}
 The footer consists of two bytes Checksum End byte
